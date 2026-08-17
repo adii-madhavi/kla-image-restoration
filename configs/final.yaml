@@ -1,0 +1,66 @@
+# Final submitted configuration.
+# This is the single config that must reproduce the submitted checkpoint
+# (Architecture.md §11: "Do not allow different hard-coded values in
+# training and inference" — inference.py defaults to this file).
+#
+# Values here are a reasonable, defensible starting point given the
+# documented dataset facts (Project.md §3-4). Before final submission,
+# every numeric choice below (n_features/n_groups, loss weights, lr,
+# epochs, clip_input) must be confirmed by the experiments recorded in
+# docs/experiment_log.md — do not submit unmeasured settings.
+
+seed: 2026
+device: auto
+precision: amp
+validate_every: 1
+checkpoint_every: 5
+
+data:
+  degraded_dir: data/train/degraded   # replace with the official dataset path
+  gt_dir: data/train/gt
+  split_path: splits/split_seed_2026.json
+  val_fraction: 0.1
+  num_workers: 4
+  preprocess:
+    clip_input: false      # NOT clipped by default — validate against audit_dataset.py output
+    clip_min: -1.0
+    clip_max: 2.0
+
+model:
+  name: restoration_candidate
+  input_channels: 1
+  scale: 2
+  n_features: 64
+  n_groups: 4
+  n_blocks_per_group: 6
+  reduction: 16
+  res_scale: 0.2
+  use_frequency_branch: false   # flip to true + re-run to test the frequency-branch ablation
+  clip_output: true
+
+loss:
+  pixel_loss: charbonnier
+  w_pixel: 1.0
+  w_struct: 0.15
+  w_grad: 0.05
+
+optimizer:
+  lr: 2.0e-4
+  weight_decay: 0.0
+  batch_size: 16
+  val_batch_size: 16
+  epochs: 150
+  scheduler: cosine
+  grad_clip: 1.0
+
+augmentation:
+  geometric: true
+  synthetic_degradation: true
+  synthetic_prob: 0.3
+  synthetic_degradation_kwargs:
+    gaussian_sigma_range: [0.01, 0.08]
+    speckle_sigma_range: [0.02, 0.15]
+    downsample_factor_range: [1.5, 4.0]
+
+inference:
+  batch_size: 16

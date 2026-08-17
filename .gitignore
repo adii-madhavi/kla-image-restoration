@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+.clean_env_test_venv/
+*.egg-info/
+
+# large artifacts that should not be committed wholesale
+data/
+weights/*.pt
+weights/*.pth
+weights/*.onnx
+results/checkpoints/
+*.zip
+
+# OS
+.DS_Store

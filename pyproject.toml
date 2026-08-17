@@ -1,0 +1,22 @@
+[project]
+name = "kla-image-restoration"
+version = "0.1.0"
+description = "AI-Based Restoration of Degraded Images for Semiconductor Inspection — SEMICON India Hackathon 2026, KLA problem statement."
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.black]
+line-length = 110
+
+[tool.isort]
+profile = "black"
+line_length = 110
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

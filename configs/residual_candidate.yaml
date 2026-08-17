@@ -1,0 +1,56 @@
+# Compact residual SR network (Architecture.md §8, step 2-3).
+# Used to demonstrate the value of learned restoration over bicubic
+# before scaling up to the full restoration_candidate model.
+
+seed: 2026
+device: auto
+precision: amp
+validate_every: 1
+checkpoint_every: 5
+
+data:
+  degraded_dir: data/train/degraded
+  gt_dir: data/train/gt
+  split_path: splits/split_seed_2026.json
+  val_fraction: 0.1
+  num_workers: 4
+  preprocess:
+    clip_input: false
+    clip_min: -1.0
+    clip_max: 2.0
+
+model:
+  name: residual_sr
+  input_channels: 1
+  scale: 2
+  n_features: 64
+  n_blocks: 8
+  res_scale: 0.1
+  clip_output: true
+
+loss:
+  pixel_loss: charbonnier
+  w_pixel: 1.0
+  w_struct: 0.1
+  w_grad: 0.05
+
+optimizer:
+  lr: 2.0e-4
+  weight_decay: 0.0
+  batch_size: 16
+  val_batch_size: 16
+  epochs: 100
+  scheduler: cosine
+  grad_clip: 1.0
+
+augmentation:
+  geometric: true
+  synthetic_degradation: true
+  synthetic_prob: 0.3
+  synthetic_degradation_kwargs:
+    gaussian_sigma_range: [0.01, 0.08]
+    speckle_sigma_range: [0.02, 0.15]
+    downsample_factor_range: [1.5, 4.0]
+
+inference:
+  batch_size: 16

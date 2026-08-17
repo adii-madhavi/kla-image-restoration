@@ -1,0 +1,47 @@
+# Baseline: parameter-free bicubic upsampling.
+# Purpose: establish the evidence floor every learned model must beat
+# (Architecture.md §8 model progression, step 1).
+
+seed: 2026
+device: auto
+precision: fp32          # no AMP benefit for a parameter-free model
+validate_every: 1
+checkpoint_every: 1
+
+data:
+  degraded_dir: data/train/degraded   # replace with the official dataset path
+  gt_dir: data/train/gt
+  split_path: splits/split_seed_2026.json
+  val_fraction: 0.1
+  num_workers: 4
+  preprocess:
+    clip_input: false     # NoisyLR is intentionally NOT clipped by default — Project.md §4
+    clip_min: -1.0
+    clip_max: 2.0
+
+model:
+  name: bicubic
+  input_channels: 1
+  scale: 2
+  clip_output: true
+
+loss:
+  pixel_loss: l1
+  w_pixel: 1.0
+  w_struct: 0.0
+  w_grad: 0.0
+
+optimizer:
+  lr: 0.0            # unused (no trainable params) but kept for a uniform config schema
+  weight_decay: 0.0
+  batch_size: 8
+  val_batch_size: 8
+  epochs: 1
+  scheduler: none
+
+augmentation:
+  geometric: false
+  synthetic_degradation: false
+
+inference:
+  batch_size: 8
