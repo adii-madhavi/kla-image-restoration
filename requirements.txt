@@ -1,11 +1,16 @@
 # Core
+# Minimum versions required; pin to an exact CUDA-matched torch/torchvision
+# build for the target evaluation machine (e.g. via
+# `pip install torch==<ver>+cu121 --index-url https://download.pytorch.org/whl/cu121`)
+# before a no-internet offline install, since plain PyPI wheels resolved at
+# submission time may differ from what's available in an air-gapped run.
 torch>=2.1.0
 torchvision>=0.16.0
 numpy>=1.24.0
 Pillow>=10.0.0
 PyYAML>=6.0
 
-# Metrics
+# Metrics (evaluate.py only - not required by run.py at evaluation time)
 scikit-image>=0.21.0
 scipy>=1.10.0
 lpips>=0.1.4
@@ -18,3 +23,16 @@ tqdm>=4.65.0
 
 # Testing
 pytest>=7.4.0
+
+# --- Versions verified working together in this repository (2026-08-18) ---
+# torch==2.13.0
+# torchvision==0.28.0
+# numpy==2.5.2
+# Pillow==12.3.0
+# PyYAML==6.0.3
+# scikit-image==0.26.0
+# scipy==1.18.0
+# lpips==0.1.4
+# matplotlib==3.11.1
+# tqdm==4.70.0
+# pytest==9.1.1

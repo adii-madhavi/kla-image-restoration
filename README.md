@@ -42,7 +42,8 @@ kla-image-restoration/
 ├── requirements.txt
 ├── pyproject.toml
 ├── train.py                 # reproducible training entrypoint
-├── inference.py              # standalone evaluator-facing inference script
+├── run.py                    # OFFICIAL evaluator entry point: python run.py <in-dir> <out-dir>
+├── inference.py              # full-featured standalone inference script (dev/benchmarking)
 ├── evaluate.py                # standalone PSNR/SSIM/LPIPS evaluation
 ├── benchmark.py                # end-to-end runtime benchmark (H100-style timing)
 ├── configs/                    # one YAML per run: baseline / candidates / final
@@ -122,7 +123,32 @@ python scripts/overfit_smoke_test.py --config configs/residual_candidate.yaml \
 Copy the chosen checkpoint to `weights/final.pt` before packaging a
 submission (see `weights/README.md`).
 
-## 6. Inference (standalone, evaluator-facing)
+## 6. Evaluator entry point (`run.py`)
+
+This is the exact script the organizer's grading harness invokes:
+
+```bash
+python run.py <input-dir> <output-dir>
+```
+
+- Positional arguments only - no flags, no manual configuration.
+- Reads every `*.npy` file in `<input-dir>` (single-channel, `(H, W)`
+  or `(H, W, 1)`).
+- Creates `<output-dir>` if it does not already exist.
+- Writes one restored `*.npy` file per input file, **same filename**.
+- Each output is `float32`, shape `(H, W)`, exactly `2x` the input
+  resolution in both dimensions, values clipped to `[0, 1]`, guaranteed
+  finite (no NaN/Inf).
+- Loads the model architecture and weights bundled in this repo only
+  (`configs/final.yaml` / `weights/final.pt`) - no internet access, no
+  API keys, no additional downloads, no user interaction required.
+- Uses CUDA automatically if available, otherwise CPU.
+
+`weights/final.pt` must exist (see §5/`weights/README.md`) - `run.py`
+raises immediately if it's missing rather than silently falling back to
+random weights, since a real checkpoint is required for evaluation.
+
+## 6b. Inference (standalone, full-featured - dev/benchmarking use)
 
 ```bash
 python inference.py --input_dir /path/to/noisy_lr_images --output_dir /path/to/restored_images
