@@ -8,11 +8,14 @@ __pycache__/
 *.egg-info/
 
 # large artifacts that should not be committed wholesale
-data/
+# NOTE: anchored to repo root (leading /) - an unanchored `data/` also
+# matches src/data/, which is source code, not a data artifact.
+/data/
+/data_raw/
 weights/*.pt
 weights/*.pth
 weights/*.onnx
-results/checkpoints/
+results/
 *.zip
 
 # OS

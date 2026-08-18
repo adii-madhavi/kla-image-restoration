@@ -26,4 +26,7 @@ class GradientLoss(nn.Module):
         return torch.sqrt(gx * gx + gy * gy + 1e-6)
 
     def forward(self, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        return F.l1_loss(self._gradient_mag(pred), self._gradient_mag(target))
+        # Force fp32 for the same reason as SSIMLoss - keep the small
+        # stabilizing epsilon well clear of fp16 subnormal range.
+        with torch.autocast(device_type=pred.device.type, enabled=False):
+            return F.l1_loss(self._gradient_mag(pred.float()), self._gradient_mag(target.float()))

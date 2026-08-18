@@ -1,0 +1,57 @@
+{
+  "degraded": {
+    "label": "degraded",
+    "directory": "data/train/degraded",
+    "n_files": 3200,
+    "file_formats": {
+      "npy": 3200
+    },
+    "dtypes": {
+      "float32": 3200
+    },
+    "shapes": {
+      "(128, 128)": 3200
+    },
+    "value_min": -0.2785630524158478,
+    "value_max": 2.1580049991607666,
+    "mean_fraction_below_zero": 0.002848949432373047,
+    "mean_fraction_above_one": 0.031084518432617187,
+    "max_fraction_below_zero": 0.2342529296875,
+    "max_fraction_above_one": 0.44189453125,
+    "n_exact_duplicate_groups": 0,
+    "exact_duplicate_examples": []
+  },
+  "gt": {
+    "label": "gt",
+    "directory": "data/train/gt",
+    "n_files": 3200,
+    "file_formats": {
+      "npy": 3200
+    },
+    "dtypes": {
+      "float32": 3200
+    },
+    "shapes": {
+      "(256, 256)": 3200
+    },
+    "value_min": 0.0,
+    "value_max": 1.0,
+    "mean_fraction_below_zero": 0.0,
+    "mean_fraction_above_one": 0.0,
+    "max_fraction_below_zero": 0.0,
+    "max_fraction_above_one": 0.0,
+    "n_exact_duplicate_groups": 0,
+    "exact_duplicate_examples": []
+  },
+  "pairing": {
+    "n_common_pairs": 3200,
+    "n_missing_gt": 0,
+    "n_missing_degraded": 0,
+    "missing_gt_examples": [],
+    "missing_degraded_examples": [],
+    "scale_distribution": {
+      "(2.0, 2.0)": 2000
+    },
+    "non_integer_or_asymmetric_scale_examples": []
+  }
+}

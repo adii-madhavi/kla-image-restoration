@@ -44,5 +44,12 @@ class SSIMLoss(nn.Module):
         return numerator / denominator.clamp_min(1e-12)
 
     def forward(self, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        ssim_map = self._ssim_map(pred, target)
-        return 1.0 - ssim_map.mean()
+        # Force fp32 regardless of an ambient AMP autocast context: C1/C2
+        # and the 1e-12 denominator floor are tuned for fp32 and silently
+        # underflow to exactly 0 in fp16 (smallest fp16 subnormal is
+        # ~6e-8), which turns the SSIM division into a division-by-zero
+        # producing inf loss - this is not hypothetical, it reproduces on
+        # every real-dataset training run under precision: amp.
+        with torch.autocast(device_type=pred.device.type, enabled=False):
+            ssim_map = self._ssim_map(pred.float(), target.float())
+            return 1.0 - ssim_map.mean()

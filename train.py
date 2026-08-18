@@ -37,22 +37,31 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+class StemFilteredDataset(PairedRestorationDataset):
+    """PairedRestorationDataset restricted to a given set of filename
+    stems (train or val split). Defined at module level (not as a local
+    closure) so it can be pickled by multiprocessing DataLoader workers
+    on platforms using the 'spawn' start method (e.g. Windows)."""
+
+    def __init__(self, *args, allowed_stems, **kwargs):
+        self.allowed_stems = set(allowed_stems)
+        super().__init__(*args, **kwargs)
+
+    def _build_pairs(self):
+        pairs = super()._build_pairs()
+        return [p for p in pairs if p[0].stem in self.allowed_stems]
+
+
 def _make_stem_filtered_dataset(cfg, scale, preprocess, augment, stems):
     """Build a PairedRestorationDataset restricted to a given set of
     filename stems (train or val split)."""
-    allowed = set(stems)
-
-    class _StemFiltered(PairedRestorationDataset):
-        def _build_pairs(self):
-            pairs = super()._build_pairs()
-            return [p for p in pairs if p[0].stem in allowed]
-
-    return _StemFiltered(
+    return StemFilteredDataset(
         degraded_dir=cfg.data["degraded_dir"],
         gt_dir=cfg.data["gt_dir"],
         scale=scale,
         preprocess=preprocess,
         augment=augment,
+        allowed_stems=stems,
     )
 
 
