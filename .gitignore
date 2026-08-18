@@ -12,9 +12,12 @@ __pycache__/
 # matches src/data/, which is source code, not a data artifact.
 /data/
 /data_raw/
+# keep out stray/intermediate checkpoints, but weights/final.pt IS the
+# required submission artifact (weights/README.md) and must be tracked.
 weights/*.pt
 weights/*.pth
 weights/*.onnx
+!weights/final.pt
 results/
 *.zip
 
